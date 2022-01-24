@@ -2,6 +2,7 @@ package ru.job4j.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Person;
 import ru.job4j.service.ChatService;
@@ -13,8 +14,11 @@ import java.util.List;
 public class PersonController {
     private final ChatService service;
 
-    public PersonController(final ChatService service) {
+    private BCryptPasswordEncoder encoder;
+
+    public PersonController(ChatService service, BCryptPasswordEncoder encoder) {
         this.service = service;
+        this.encoder = encoder;
     }
 
     @GetMapping("/")
@@ -31,23 +35,12 @@ public class PersonController {
         );
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Person> save(Person person) {
+    @PostMapping("/sign-up")
+    public ResponseEntity<Person> save(@RequestBody Person person) {
+        person.setPassword(encoder.encode(person.getPassword()));
         return new ResponseEntity<Person>(
                 service.savePerson(person),
                 HttpStatus.CREATED
         );
-    }
-
-    @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
-        this.service.savePerson(person);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        this.service.deletePersonById(id);
-        return ResponseEntity.ok().build();
     }
 }

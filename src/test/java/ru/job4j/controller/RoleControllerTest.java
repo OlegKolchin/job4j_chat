@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.Job4jChatApplication;
 import ru.job4j.domain.Role;
@@ -26,6 +27,7 @@ public class RoleControllerTest {
     private Gson gson;
 
     @Test
+    @WithMockUser
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get("/role/"))
                 .andDo(print())
@@ -34,6 +36,7 @@ public class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenFindRole() throws Exception {
         this.mockMvc.perform(get("/role/1"))
                 .andDo(print())
@@ -42,6 +45,7 @@ public class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenRoleNotFound() throws Exception {
         this.mockMvc.perform(get("/role/20"))
                 .andDo(print())
@@ -49,6 +53,7 @@ public class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenCreate() throws Exception {
         Room room = Room.of("new Room");
         this.mockMvc.perform(post("/role/")
@@ -58,6 +63,7 @@ public class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenUpdate() throws Exception {
         Role role = Role.of("Admin");
         role.setId(1);
@@ -68,6 +74,7 @@ public class RoleControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenDelete() throws Exception {
         this.mockMvc.perform(delete("/role/2"))
                 .andDo(print())

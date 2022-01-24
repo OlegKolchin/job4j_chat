@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.Job4jChatApplication;
 import ru.job4j.domain.Room;
@@ -28,6 +29,7 @@ public class RoomControllerTest {
     private Gson gson;
 
     @Test
+    @WithMockUser
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get("/room/"))
                 .andDo(print())
@@ -36,6 +38,7 @@ public class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenFindRoom() throws Exception {
         this.mockMvc.perform(get("/room/1"))
                 .andDo(print())
@@ -44,6 +47,7 @@ public class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenRoomNotFound() throws Exception {
         this.mockMvc.perform(get("/room/2"))
                 .andDo(print())
@@ -51,6 +55,7 @@ public class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenCreate() throws Exception {
         Room room = Room.of("new Room");
         this.mockMvc.perform(post("/room/")
@@ -60,6 +65,7 @@ public class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenUpdate() throws Exception {
         Room room = Room.of("new Room");
         room.setId(1);
@@ -70,6 +76,7 @@ public class RoomControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenDelete() throws Exception {
         this.mockMvc.perform(delete("/room/2"))
                 .andDo(print())

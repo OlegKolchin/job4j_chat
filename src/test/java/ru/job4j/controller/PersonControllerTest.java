@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.Job4jChatApplication;
 import ru.job4j.domain.Person;
@@ -26,6 +27,7 @@ public class PersonControllerTest {
     private Gson gson;
 
     @Test
+    @WithMockUser
     public void shouldReturnDefaultMessage() throws Exception {
         this.mockMvc.perform(get("/person/"))
                 .andDo(print())
@@ -34,6 +36,7 @@ public class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenFindPerson() throws Exception {
         this.mockMvc.perform(get("/person/1"))
                 .andDo(print())
@@ -42,6 +45,7 @@ public class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenPersonNotFound() throws Exception {
         this.mockMvc.perform(get("/person/20"))
                 .andDo(print())
@@ -49,34 +53,13 @@ public class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void whenCreate() throws Exception {
         Person person = Person.of("Petr", "sample", "123", Role.of("role"));
-        this.mockMvc.perform(post("/person/")
+        this.mockMvc.perform(post("/person/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(person)))
                 .andExpect(status().isCreated());
-    }
-
-    @Test
-    public void whenUpdate() throws Exception {
-        Person person = Person.of("Petr", "sample", "123", Role.of("role"));
-        person.setId(1);
-        this.mockMvc.perform(post("/person/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(person)))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    public void whenDelete() throws Exception {
-        Person person = Person.of("Petr", "sample", "123", Role.of("role"));
-        this.mockMvc.perform(post("/person/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(person)))
-                .andExpect(status().isCreated());
-        this.mockMvc.perform(delete("/person/3"))
-                .andDo(print())
-                .andExpect(status().isOk());
     }
 
 }
