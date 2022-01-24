@@ -3,6 +3,7 @@ package ru.job4j.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.service.ChatService;
 
@@ -34,17 +35,29 @@ public class MessageController {
 
     @GetMapping("/room/{id}")
     public List<Message> findMessagesByRoomId(@PathVariable int id) {
-        return service.findMessagesByRoomId(id);
+        var messages = service.findMessagesByRoomId(id);
+        if (messages.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Messages not found");
+        }
+        return messages;
     }
 
     @GetMapping("/person/{id}")
     public List<Message> findMessagesByPersonId(@PathVariable int id) {
-        return service.findMessagesByPersonId(id);
+        var messages = service.findMessagesByPersonId(id);
+        if (messages.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Messages not found");
+        }
+        return messages;
     }
 
     @GetMapping(value = "/", params = {"rId", "pId"})
     public List<Message> findMessagesByRoomAndPersonId(int rId, int pId) {
-        return service.findMessagesByRoomIdAndPersonId(rId, pId);
+        var messages = service.findMessagesByRoomIdAndPersonId(rId, pId);
+        if (messages.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Messages not found");
+        }
+        return messages;
     }
 
     @PostMapping("/")
@@ -69,6 +82,9 @@ public class MessageController {
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Message message) {
+        if (message.getBody() == null) {
+            throw new NullPointerException("Body cannot be empty");
+        }
         this.service.saveMessage(message);
         return ResponseEntity.ok().build();
     }

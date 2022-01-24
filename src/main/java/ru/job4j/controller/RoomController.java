@@ -35,7 +35,7 @@ public class RoomController {
 
     @PostMapping("/")
     public ResponseEntity<Room> save(Room room) {
-        return new ResponseEntity<Room>(
+        return new ResponseEntity<>(
                 service.saveRoom(room),
                 HttpStatus.CREATED
         );
