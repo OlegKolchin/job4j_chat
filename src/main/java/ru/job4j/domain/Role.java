@@ -10,7 +10,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    String name;
+    private String name;
 
     public static Role of(String name) {
         Role role = new Role();
