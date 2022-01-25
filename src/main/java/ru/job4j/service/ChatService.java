@@ -1,7 +1,9 @@
 package ru.job4j.service;
 
-import antlr.debug.MessageAdapter;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.domain.Person;
 import ru.job4j.domain.Role;
@@ -11,7 +13,10 @@ import ru.job4j.repository.PersonRepository;
 import ru.job4j.repository.RoleRepository;
 import ru.job4j.repository.RoomRepository;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,5 +116,52 @@ public class ChatService {
 
     public void deleteRoomById(int id) {
         roomRepository.deleteById(id);
+    }
+
+    public Message patch(int id, Message message) throws InvocationTargetException, IllegalAccessException {
+        return (Message) patch(messageRepository, id, message);
+    }
+
+    public Person patch(int id, Person person) throws InvocationTargetException, IllegalAccessException {
+        return (Person) patch(personRepository, id, person);
+    }
+
+    public Role patch(int id, Role role) throws InvocationTargetException, IllegalAccessException {
+        return (Role) patch(roleRepository, id, role);
+    }
+
+    public Room patch(int id, Room room) throws InvocationTargetException, IllegalAccessException {
+        return (Room) patch(roomRepository, id, room);
+    }
+
+    private Object patch(CrudRepository repository, int id, Object object) throws InvocationTargetException, IllegalAccessException {
+        var current = repository.findById(id);
+        if (!current.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        var methods = current.get().getClass().getDeclaredMethods();
+        var namePerMethod = new HashMap<String, Method>();
+        for (var method: methods) {
+            var name = method.getName();
+            if ((name.startsWith("get") || name.startsWith("set"))
+                    && (!name.contains("setId") && !name.contains("getId"))) {
+                namePerMethod.put(name, method);
+            }
+        }
+        for (var name : namePerMethod.keySet()) {
+            if (name.startsWith("get")) {
+                var getMethod = namePerMethod.get(name);
+                var setMethod = namePerMethod.get(name.replace("get", "set"));
+                if (setMethod == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid properties mapping");
+                }
+                var newValue = getMethod.invoke(object);
+                if (newValue != null) {
+                    setMethod.invoke(current.get(), newValue);
+                }
+            }
+        }
+        repository.save(current.get());
+        return current.get();
     }
 }

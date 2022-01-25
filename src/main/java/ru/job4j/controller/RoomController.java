@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Room;
 import ru.job4j.service.ChatService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 
@@ -40,6 +41,11 @@ public class RoomController {
                 HttpStatus.CREATED
         );
     }
+    @PatchMapping("/patch/{id}")
+    public Room patch(@PathVariable int id, @RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
+        return this.service.patch(id, room);
+    }
+
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Room room) {

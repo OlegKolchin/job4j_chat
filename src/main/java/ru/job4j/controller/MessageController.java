@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import ru.job4j.domain.Message;
 import ru.job4j.service.ChatService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -94,5 +96,11 @@ public class MessageController {
         this.service.deleteMessageById(id);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/patch/{id}")
+    public Message patch(@PathVariable int id, @RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
+        return this.service.patch(id, message);
+    }
+
 
 }
