@@ -10,6 +10,7 @@ import ru.job4j.service.ChatService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -45,11 +46,12 @@ public class PersonController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Person> save(@RequestBody Person person) {
+    public ResponseEntity<Person> save(@Valid @RequestBody Person person) {
         if (person.getName().equalsIgnoreCase("admin")) {
             throw new IllegalArgumentException("Username can not be 'admin'");
         }
         person.setPassword(encoder.encode(person.getPassword()));
+        person.setRole(service.findRoleById(1).get());
         return new ResponseEntity<>(
                 service.savePerson(person),
                 HttpStatus.CREATED

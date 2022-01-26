@@ -1,6 +1,7 @@
 package ru.job4j.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
@@ -9,8 +10,11 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank(message = "Name can not be empty!")
     private String name;
+    @NotBlank(message = "Email cannot be empty!")
     private String email;
+    @NotBlank(message = "Password can not be empty!")
     private String password;
 
     @ManyToOne(cascade = CascadeType.ALL)

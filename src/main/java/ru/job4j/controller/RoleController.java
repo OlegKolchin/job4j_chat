@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Role;
 import ru.job4j.service.ChatService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class RoleController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Role> save(Role role) {
+    public ResponseEntity<Role> save(@Valid @RequestBody Role role) {
         return new ResponseEntity<Role>(
                 service.saveRole(role),
                 HttpStatus.CREATED
@@ -41,13 +42,13 @@ public class RoleController {
     }
 
     @PatchMapping("/patch/{id}")
-    public Role patch(@PathVariable int id, @RequestBody Role role) throws InvocationTargetException, IllegalAccessException {
+    public Role patch(@PathVariable int id, @Valid @RequestBody Role role) throws InvocationTargetException, IllegalAccessException {
             return this.service.patch(id, role);
         }
 
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Role role) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Role role) {
         this.service.saveRole(role);
         return ResponseEntity.ok().build();
     }

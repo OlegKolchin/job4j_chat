@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Room;
 import ru.job4j.service.ChatService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -35,20 +36,20 @@ public class RoomController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Room> save(Room room) {
+    public ResponseEntity<Room> save(@Valid @RequestBody Room room) {
         return new ResponseEntity<>(
                 service.saveRoom(room),
                 HttpStatus.CREATED
         );
     }
     @PatchMapping("/patch/{id}")
-    public Room patch(@PathVariable int id, @RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
+    public Room patch(@PathVariable int id, @Valid @RequestBody Room room) throws InvocationTargetException, IllegalAccessException {
         return this.service.patch(id, room);
     }
 
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Room room) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Room room) {
         this.service.saveRoom(room);
         return ResponseEntity.ok().build();
     }

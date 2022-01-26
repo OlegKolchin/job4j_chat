@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.service.ChatService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class MessageController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> save(Message message) {
+    public ResponseEntity<Message> save(@Valid @RequestBody Message message) {
         return new ResponseEntity<>(
                 service.saveMessage(message),
                 HttpStatus.CREATED
@@ -71,7 +72,7 @@ public class MessageController {
     }
 
     @PostMapping("/room/{id}")
-    public ResponseEntity save(@PathVariable int id, Message message) {
+    public ResponseEntity save(@PathVariable int id, @Valid Message message) {
         var room = service.findRoomById(id);
         if (room.isPresent()) {
             message.setRoom(room.get());
@@ -83,10 +84,7 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Message message) {
-        if (message.getBody() == null) {
-            throw new NullPointerException("Body cannot be empty");
-        }
+    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
         this.service.saveMessage(message);
         return ResponseEntity.ok().build();
     }
@@ -98,7 +96,7 @@ public class MessageController {
     }
 
     @PatchMapping("/patch/{id}")
-    public Message patch(@PathVariable int id, @RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
+    public Message patch(@PathVariable int id, @Valid @RequestBody Message message) throws InvocationTargetException, IllegalAccessException {
         return this.service.patch(id, message);
     }
 
