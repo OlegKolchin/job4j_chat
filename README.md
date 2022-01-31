@@ -1,10 +1,10 @@
 Chat
 =============
 
-###Description
+### Description
 This project is the REST API chat service. 
 
-###Used technologies:
+### Used technologies:
 1. Spring Boot
 2. Spring Data
 3. Spring Security
@@ -12,7 +12,7 @@ This project is the REST API chat service.
 5. JWT
 6. Liquibase
 
-###Functionality
+### Functionality
 Here are some of the core functions:
 
 Registration
