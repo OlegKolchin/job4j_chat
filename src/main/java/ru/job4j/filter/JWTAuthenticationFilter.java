@@ -40,6 +40,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Person person = new ObjectMapper()
                     .readValue(req.getInputStream(), Person.class);
 
+            req.getSession().setAttribute("user_name", person.getName());
+
             return auth.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             person.getName(),

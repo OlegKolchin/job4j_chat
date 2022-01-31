@@ -78,6 +78,10 @@ public class ChatService {
         return personRepository.findById(id);
     }
 
+    public Optional<Person> findPersonByName(String name) {
+        return personRepository.findPersonByName(name);
+    }
+
     public Optional<Role> findRoleById(int id) {
         return roleRepository.findById(id);
     }

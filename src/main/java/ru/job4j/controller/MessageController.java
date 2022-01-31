@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.service.ChatService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -72,15 +73,21 @@ public class MessageController {
     }
 
     @PostMapping("/room/{id}")
-    public ResponseEntity save(@PathVariable int id, @Valid Message message) {
+    public ResponseEntity save(@PathVariable int id, @Valid @RequestBody Message message, HttpServletRequest req) {
         var room = service.findRoomById(id);
+        String username = req.getSession().getAttribute("user_name").toString();
         if (room.isPresent()) {
             message.setRoom(room.get());
+            message.setPerson(service.findPersonByName(username).get());
+            service.saveMessage(message);
+            String body = String.format("user : %s, message : %s, room : %s",
+                    username, message.getBody(), room.get().getName());
+            return new ResponseEntity<>(
+                    body,
+                    HttpStatus.CREATED
+            );
         }
-        return new ResponseEntity<>(
-                service.saveMessage(message),
-                HttpStatus.CREATED
-        );
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/")

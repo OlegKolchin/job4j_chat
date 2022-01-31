@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.job4j.domain.Person;
 import ru.job4j.repository.PersonRepository;
 
+import java.util.Optional;
+
 import static java.util.Collections.emptyList;
 
 @Service
@@ -20,10 +22,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person user = repository.findPersonByName(username);
-        if (user == null) {
+        Optional<Person> user = repository.findPersonByName(username);
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
-        return new User(user.getName(), user.getPassword(), emptyList());
+        return new User(user.get().getName(), user.get().getPassword(), emptyList());
     }
 }
