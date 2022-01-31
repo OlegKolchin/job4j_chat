@@ -26,3 +26,5 @@ Get all messages
 Get all rooms
 ![ScreenShot](images/5.png)
 
+### Contact
+If you have any questions, feel free to contact me: oleg.kolchin.j@gmail.com
